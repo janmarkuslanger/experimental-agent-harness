@@ -14,4 +14,7 @@ uv run agent.py             # uses model "llama3.2"
 uv run agent.py mistral      # different model
 ```
 
-The agent runs a chat loop against Ollama and has one tool (`run_shell`) that lets the model execute shell commands.
+The agent runs a chat loop against Ollama and has two tools:
+
+- `run_shell` — execute a shell command
+- `read_file` — read a text file's content
