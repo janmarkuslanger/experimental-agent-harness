@@ -27,11 +27,30 @@ TOOLS = [{
 
 
 def run_shell(command: str) -> str:
+    """Execute a shell command and return its combined output.
+
+    Args:
+        command: Shell command to execute (passed to the system shell).
+
+    Returns:
+        Combined stdout and stderr, truncated to 4000 characters.
+    """
     result = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=30)
     return (result.stdout + result.stderr)[:4000]
 
 
 def chat(messages: list) -> dict:
+    """Send the conversation to Ollama and return the assistant's reply.
+
+    Args:
+        messages: Full conversation history in Ollama chat format
+            (list of dicts with "role" and "content", plus any prior
+            "tool" results).
+
+    Returns:
+        The "message" object from Ollama's response, which may contain
+        "content" and/or "tool_calls".
+    """
     payload = json.dumps({"model": MODEL, "messages": messages, "tools": TOOLS, "stream": False}).encode()
     req = urllib.request.Request(URL, data=payload, headers={"Content-Type": "application/json"})
     with urllib.request.urlopen(req) as resp:
@@ -39,6 +58,7 @@ def chat(messages: list) -> dict:
 
 
 def main():
+    """Run the interactive chat loop, dispatching tool calls until the model replies with plain text."""
     messages = []
     print(f"Minimal Ollama Agent ({MODEL}). Ctrl+C zum Beenden.")
     while True:
